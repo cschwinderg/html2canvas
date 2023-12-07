@@ -165,23 +165,25 @@ export class CanvasRenderer extends Renderer {
         const fontSize = isDimensionToken(styles.fontSize)
             ? `${styles.fontSize.number}${styles.fontSize.unit}`
             : `${styles.fontSize.number}px`;
+        const lineHeight = `${styles.lineHeight}px`;
 
         return [
             [styles.fontStyle, fontVariant, styles.fontWeight, fontSize, fontFamily].join(' '),
             fontFamily,
-            fontSize
+            fontSize,
+            lineHeight
         ];
     }
 
     async renderTextNode(text: TextContainer, styles: CSSParsedDeclaration): Promise<void> {
-        const [font, fontFamily, fontSize] = this.createFontStyle(styles);
+        const [font, fontFamily, fontSize, lineHeight] = this.createFontStyle(styles);
 
         this.ctx.font = font;
 
         this.ctx.direction = styles.direction === DIRECTION.RTL ? 'rtl' : 'ltr';
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'alphabetic';
-        const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+        const {baseline, middle} = this.fontMetrics.getMetrics(fontFamily, fontSize, lineHeight);
         const paintOrder = styles.paintOrder;
 
         text.textBounds.forEach((text) => {
@@ -388,8 +390,8 @@ export class CanvasRenderer extends Renderer {
         }
 
         if (isTextInputElement(container) && container.value.length) {
-            const [fontFamily, fontSize] = this.createFontStyle(styles);
-            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize);
+            const [fontFamily, fontSize, lineHeight] = this.createFontStyle(styles);
+            const {baseline} = this.fontMetrics.getMetrics(fontFamily, fontSize, lineHeight);
 
             this.ctx.font = fontFamily;
             this.ctx.fillStyle = asString(styles.color);

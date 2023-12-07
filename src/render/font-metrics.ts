@@ -15,7 +15,7 @@ export class FontMetrics {
         this._document = document;
     }
 
-    private parseMetrics(fontFamily: string, fontSize: string): FontMetric {
+    private parseMetrics(fontFamily: string, fontSize: string, lineHeight: string): FontMetric {
         const container = this._document.createElement('div');
         const img = this._document.createElement('img');
         const span = this._document.createElement('span');
@@ -25,6 +25,7 @@ export class FontMetrics {
         container.style.visibility = 'hidden';
         container.style.fontFamily = fontFamily;
         container.style.fontSize = fontSize;
+        container.style.lineHeight = lineHeight;
         container.style.margin = '0';
         container.style.padding = '0';
         container.style.whiteSpace = 'nowrap';
@@ -52,7 +53,7 @@ export class FontMetrics {
         container.removeChild(span);
         container.appendChild(this._document.createTextNode(SAMPLE_TEXT));
 
-        container.style.lineHeight = 'normal';
+        // container.style.lineHeight = 'normal';
         img.style.verticalAlign = 'super';
 
         const middle = img.offsetTop - container.offsetTop + 2;
@@ -61,10 +62,10 @@ export class FontMetrics {
 
         return {baseline, middle};
     }
-    getMetrics(fontFamily: string, fontSize: string): FontMetric {
-        const key = `${fontFamily} ${fontSize}`;
+    getMetrics(fontFamily: string, fontSize: string, lineHeight: string): FontMetric {
+        const key = `${fontFamily} ${fontSize} ${lineHeight}`;
         if (typeof this._data[key] === 'undefined') {
-            this._data[key] = this.parseMetrics(fontFamily, fontSize);
+            this._data[key] = this.parseMetrics(fontFamily, fontSize, lineHeight);
         }
 
         return this._data[key];
